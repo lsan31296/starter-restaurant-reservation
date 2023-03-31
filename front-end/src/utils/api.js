@@ -79,8 +79,3 @@ export async function createReservation(reservation, signal) {
 
   return await fetchJson(url, options);
 }
-
-//Using the following to test UI before connecting to back end
-export async function listReservations1(signal) {
-  return [];
-}

@@ -14,9 +14,6 @@ import { next, previous, today } from "../utils/date-time";
 function Dashboard({ date }) {
   const [reservations, setReservations] = useState([]);
   const [reservationsError, setReservationsError] = useState(null);
-  //const [searchParams, setSearchParams] = useSearchParams();
-
-  //const [dates, setDates] = useState(searchParams.get('date') ? searchParams.get('date') : today());
   const [dates, setDates] = useState(date);
 
   useEffect(loadDashboard, [dates]);
@@ -24,7 +21,7 @@ function Dashboard({ date }) {
   function loadDashboard() {
     const abortController = new AbortController();
     setReservationsError(null);
-    listReservations({ dates }, abortController.signal)
+    listReservations({ reservation_date: dates }, abortController.signal)
       .then(setReservations)
       .catch(setReservationsError);
     return () => abortController.abort();
@@ -41,7 +38,7 @@ function Dashboard({ date }) {
   const handleClickToday = () => {
     setDates(today());
   };
-
+  
   const reservationsFiltered = reservations.filter((reservation)=> reservation.reservation_date === dates);
 
   const tableRows = reservationsFiltered.map((reservation) => (
