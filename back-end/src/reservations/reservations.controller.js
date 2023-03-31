@@ -1,5 +1,6 @@
 const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
 const hasProperties = require("../errors/hasProperties");
+const dateHelpers = require("./validationHelpers");
 const reservationsService = require("./reservations.service");
 
 /**
@@ -33,11 +34,31 @@ function hasData(req, res, next) {
 
 function validateReservationDate(req, res, next) {
   const { reservation_date } = req.body.data;
+
   if (reservation_date.match(/\d\d\d\d-\d\d-\d\d/)) {
     return next();
   }
   next({ status: 400, message: `reservation_date property must be an actual date, in the format: 'YYYY-MM-DD'.` })
 }
+
+function validateReservationDayOfWeek(req, res, next) {
+  const { reservation_date } = req.body.data;
+  const weekDay = dateHelpers.dayOfWeek(reservation_date);
+  if (weekDay !== 2) {
+    return next();
+  }
+  next({ status: 400, message: `Reservation has been set on a day we are closed, please select another date!` });
+}
+
+function validateFutureReservationDate(req, res, next) {
+  const { reservation_date } = req.body.data;
+  const isReservationInThePast = dateHelpers.isReservationPastDate(reservation_date);
+  if (!isReservationInThePast) {
+    return next();
+  }
+  next({ status: 400, message: `Must reserve on a date in the future.` });
+}
+
 function validateReservationTime(req, res, next) {
   const { reservation_time } = req.body.data;
   if (reservation_time.match(/\d\d:\d\d/)) {
@@ -72,6 +93,8 @@ module.exports = {
     hasData,
     hasRequiredProperties,
     validateReservationDate,
+    validateFutureReservationDate,
+    validateReservationDayOfWeek,
     validateReservationTime,
     validatePeople,
     asyncErrorBoundary(create)
