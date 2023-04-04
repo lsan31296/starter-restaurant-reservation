@@ -52,11 +52,20 @@ function validateReservationDayOfWeek(req, res, next) {
 
 function validateFutureReservationDate(req, res, next) {
   const { reservation_date } = req.body.data;
-  const isReservationInThePast = dateHelpers.isReservationPastDate(reservation_date);
+  const isReservationInThePast = dateHelpers.isReservationDatePast(reservation_date);
   if (!isReservationInThePast) {
     return next();
   }
   next({ status: 400, message: `Must reserve on a date in the future.` });
+}
+
+function validateFutureReservationTime(req, res, next) {
+  const { reservation_date, reservation_time } = req.body.data;
+  const isReservationTimeInThePast = dateHelpers.isReservationTimePast(reservation_date, reservation_time);
+  if (!isReservationTimeInThePast) {
+    return next();
+  }
+  next({ status:400, message: `Reservation must be for a future date/time between 10:30 AM and 9:30PM.`});
 }
 
 function validateReservationTime(req, res, next) {
@@ -96,6 +105,7 @@ module.exports = {
     validateFutureReservationDate,
     validateReservationDayOfWeek,
     validateReservationTime,
+    validateFutureReservationTime,
     validatePeople,
     asyncErrorBoundary(create)
   ],

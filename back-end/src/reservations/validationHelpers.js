@@ -44,7 +44,7 @@ function dayOfWeek(reservation_date) {
  * @returns {boolean}
  * returns true if reservation date is in the past and returns false if in the present or future
  */
-function isReservationPastDate(reservation_date) {
+function isReservationDatePast(reservation_date) {
     const currentDateString = asDateString(new Date());
     const currDay = currentDateString.slice(8);
     const currMonth = currentDateString.slice(5, 7);
@@ -64,4 +64,49 @@ function isReservationPastDate(reservation_date) {
     return false;
 }
 
-module.exports = {dayOfWeek, isReservationPastDate};
+function isReservationOnSameDay(reservation_date) {
+    const currentDateString = asDateString(new Date());
+
+    //if current date string is equal to reservation string then, return true
+    if (reservation_date === currentDateString) return true;
+    //else return false
+    return false;
+}
+
+function isReservationTimePast(reservation_date, reservation_time) {
+    
+    if (isReservationDatePast(reservation_date)) {
+        return true;
+    } else {
+        const currentTime = new Date();
+        const reservationHours = Number(reservation_time.slice(0,2));
+        const reservationMinutes = Number(reservation_time.slice(3));
+
+        //if reservation date is on the same day then:
+        if (isReservationOnSameDay) {
+            //Reservation time should not be in the past, return true if it is
+            if (currentTime.getHours() > reservationHours) return true;
+            if (currentTime.getHours() === reservationHours && currentTime.getMinutes() >= reservationMinutes) return true;
+            //Reservation time should not be before 10:30 AM, return true if it is
+            if (reservationHours < 10) return true;
+            if (reservationHours === 10 && reservationMinutes < 30) return true;
+            //Reservation time should not be after 9:30 PM(21:30), return true if it is
+            if (reservationHours > 21) return true;
+            if (reservationHours === 21 && reservationMinutes > 30) return true;
+        }
+        //else, reservation date is in the future
+        //Reservation time should not be before 10:30 AM, return true if it is
+        if (reservationHours < 10) return true;
+        if (reservationHours === 10 && reservationMinutes < 30) return true;
+        //Reservation time should not be after 9:30 PM(21:30), return true if it is
+        if (reservationHours > 21) return true;
+        if (reservationHours === 21 && reservationMinutes > 30) return true;
+        //return false
+        return false;
+    }
+
+}
+
+
+
+module.exports = {dayOfWeek, isReservationDatePast, isReservationTimePast};
