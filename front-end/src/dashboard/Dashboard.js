@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { listReservations } from "../utils/api";
+import { listReservations, listTables } from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
 import { next, previous, today } from "../utils/date-time";
+import TablesTable from "../tables/TablesTable";
 //import { useSearchParams } from "react-router-dom";
 
 
@@ -15,8 +16,10 @@ function Dashboard({ date }) {
   const [reservations, setReservations] = useState([]);
   const [reservationsError, setReservationsError] = useState(null);
   const [dates, setDates] = useState(date);
+  const [tables, setTables] = useState([]);
+  const [tablesError, setTablesError] = useState(null);
 
-  useEffect(loadDashboard, [dates]);
+  useEffect(loadDashboard, [dates, tables]);
 
   function loadDashboard() {
     const abortController = new AbortController();
@@ -24,6 +27,10 @@ function Dashboard({ date }) {
     listReservations({ reservation_date: dates }, abortController.signal)
       .then(setReservations)
       .catch(setReservationsError);
+    //load up tables section
+    listTables(abortController.signal)
+      .then(setTables)
+      .catch(setTablesError);
     return () => abortController.abort();
   }
 
@@ -79,6 +86,12 @@ function Dashboard({ date }) {
           {tableRows}
         </tbody>
       </table>
+
+      <div className="d-md-flex mb-3">
+        <h4 className="mb-0">Tables</h4>
+      </div>
+      <ErrorAlert error={tablesError} />
+      <TablesTable tables={tables} />
     </main>
   );
 }
