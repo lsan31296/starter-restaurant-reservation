@@ -28,13 +28,13 @@ function NewTable() {
     const handleChange = ({ target }) => {
         setTable({
             ...table,
-            [target.name]: target.name === "people" ? parseInt(target.value) : target.value,
+            [target.name]: target.name === "capacity" ? parseInt(target.value) : target.value,
         });
-        console.log(table);
+        //console.log(table);
     }
 
     const handleCancel = () => {
-        history.push("/");
+        history.goBack();
     }
 
     return (

@@ -101,3 +101,15 @@ export async function createTable(table, signal) {
   return await fetchJson(url, options);
 }
 
+//seats the table by adding the associated reservation_id into the foreign column within tables table
+export async function seatTable(table_id, reservation_id, signal) {
+  const url = `${API_BASE_URL}/tables/${table_id}/seat`;
+  const options = {
+    method: "PUT",
+    headers,
+    body: JSON.stringify({ data: { reservation_id: reservation_id } }),
+    signal,
+  };
+
+  return await fetchJson(url, options);
+}

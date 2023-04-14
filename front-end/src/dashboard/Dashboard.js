@@ -19,7 +19,7 @@ function Dashboard({ date }) {
   const [tables, setTables] = useState([]);
   const [tablesError, setTablesError] = useState(null);
 
-  useEffect(loadDashboard, [dates, tables]);
+  useEffect(loadDashboard, [dates]);
 
   function loadDashboard() {
     const abortController = new AbortController();
@@ -56,6 +56,7 @@ function Dashboard({ date }) {
       <td>{reservation.people}</td>
       <td>{reservation.reservation_date}</td>
       <td>{reservation.reservation_time}</td>
+      <td><a href={`/reservations/${reservation.reservation_id}/seat`} role="button" className="btn btn-primary">Seat</a></td>
     </tr>
   ));
 
@@ -80,6 +81,7 @@ function Dashboard({ date }) {
             <th scope="col">Party Size</th>
             <th scope="col">Date</th>
             <th scope="col">Time</th>
+            <th scop="col"></th>
           </tr>
         </thead>
         <tbody>
