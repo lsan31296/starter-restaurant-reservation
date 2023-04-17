@@ -16,9 +16,14 @@ async function update(updatedTable) {
     return await knex("tables").select("*").where({ table_id: updatedTable.table_id }).update(updatedTable, "*");
 }
 
+async function destroy(updatedTable) {
+    return await knex("tables").select("*").where({ table_id: updatedTable.table_id }).update(updatedTable, "*");
+}
+
 module.exports = {
     create,
     list,
     read,
     update,
+    destroy,
 }

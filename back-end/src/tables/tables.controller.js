@@ -14,6 +14,15 @@ async function list(req, res) {
     res.json({ data });
 }
 
+async function destroy(req, res) {
+    const updatedTable = {
+        ...res.locals.table,
+        reservation_id: null,
+    }
+    await service.destroy(updatedTable);
+    res.sendStatus(200);
+}
+
 async function seatReservation(req, res) {
     const updatedTable = {
         ...req.body.data,
@@ -29,7 +38,7 @@ async function tableExists(req, res, next) {
         res.locals.table = table;
         return next();
     }
-    next({ status: 404, message: `Table cannot be found.` });
+    next({ status: 404, message: `Table ${req.params.table_id} cannot be found.` });
 }
 
 async function reservationExists(req, res, next) {
@@ -84,8 +93,16 @@ function tableIsOccupied(req, res, next) {
     next();
 }
 
+function tableIsNotOccupied(req, res, next) {
+    if (res.locals.table.reservation_id) {
+        return next();
+    }
+    next({ status: 400, message: `This table is not occupied by another reservation.` });
+}
+
 module.exports = {
     create: [ hasData, hasRequiredPostProperties, validateTableName, validateCapacity, asyncErrorBoundary(create) ],
     list,
     update: [ hasData, asyncErrorBoundary(tableExists), hasReservationId, asyncErrorBoundary(reservationExists), resExceedsCapacity, tableIsOccupied, asyncErrorBoundary(seatReservation)],
+    destroy: [ asyncErrorBoundary(tableExists), tableIsNotOccupied, asyncErrorBoundary(destroy) ],
 }

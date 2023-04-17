@@ -83,7 +83,7 @@ function isReservationTimePast(reservation_date, reservation_time) {
         const reservationMinutes = Number(reservation_time.slice(3));
 
         //if reservation date is on the same day then:
-        if (isReservationOnSameDay) {
+        if (isReservationOnSameDay(reservation_date)) {
             //Reservation time should not be in the past, return true if it is
             if (currentTime.getHours() > reservationHours) return true;
             if (currentTime.getHours() === reservationHours && currentTime.getMinutes() >= reservationMinutes) return true;
