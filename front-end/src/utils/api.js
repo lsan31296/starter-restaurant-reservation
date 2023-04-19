@@ -115,11 +115,27 @@ export async function seatTable(table_id, reservation_id, signal) {
 }
 
 //sends delete request to 'tables/:table_id/seat', pass in parameter table
-export async function finishTable(table_id, signal) {
-  const url = `${API_BASE_URL}/tables/${table_id}/seat`;
+export async function finishTable(table, signal) {
+  const url = `${API_BASE_URL}/tables/${table.table_id}/seat`;
   const options = {
     method: "DELETE",
     headers,
+    signal,
+  };
+  return await fetchJson(url, options);
+}
+
+/**
+ * Changes the reservation status by specified paramter.
+ * @param {*} status 
+ * @param {*} reservation_id 
+ */
+export async function updateReservationStatus(status, reservation_id, signal) {
+  const url = `${API_BASE_URL}/reservations/${reservation_id}/status`;
+  const options = {
+    method: "PUT",
+    headers,
+    body: JSON.stringify({ data: { status: status } }),
     signal,
   };
   return await fetchJson(url, options);

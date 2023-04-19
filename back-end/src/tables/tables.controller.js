@@ -20,6 +20,11 @@ async function destroy(req, res) {
         reservation_id: null,
     }
     await service.destroy(updatedTable);
+    const updatedReservation = {
+        ...res.locals.reservation,
+        status: "finished"
+    };
+    await reservationsService.update(updatedReservation);
     res.sendStatus(200);
 }
 
@@ -29,6 +34,11 @@ async function seatReservation(req, res) {
         table_id: res.locals.table.table_id,
     };
     const table = await service.update(updatedTable);
+    const updatedReservation = {
+        ...res.locals.reservation,
+        status: "seated",
+    };
+    await reservationsService.update(updatedReservation);
     res.status(200).json({ data: table });
 }
 
@@ -100,9 +110,16 @@ function tableIsNotOccupied(req, res, next) {
     next({ status: 400, message: `This table is not occupied by another reservation.` });
 }
 
+function resAlreadySeated(req, res, next) {
+    if (res.locals.reservation.status === "seated") {
+        return next({ status: 400, message: `Reservation is already in status: '${res.locals.reservation.status}'.` });
+    }
+    next();
+}
+
 module.exports = {
     create: [ hasData, hasRequiredPostProperties, validateTableName, validateCapacity, asyncErrorBoundary(create) ],
     list,
-    update: [ hasData, asyncErrorBoundary(tableExists), hasReservationId, asyncErrorBoundary(reservationExists), resExceedsCapacity, tableIsOccupied, asyncErrorBoundary(seatReservation)],
-    destroy: [ asyncErrorBoundary(tableExists), tableIsNotOccupied, asyncErrorBoundary(destroy) ],
+    update: [ hasData, asyncErrorBoundary(tableExists), hasReservationId, asyncErrorBoundary(reservationExists), resAlreadySeated, resExceedsCapacity, tableIsOccupied, asyncErrorBoundary(seatReservation)],
+    destroy: [ asyncErrorBoundary(tableExists), tableIsNotOccupied, asyncErrorBoundary(reservationExists), asyncErrorBoundary(destroy) ],
 }

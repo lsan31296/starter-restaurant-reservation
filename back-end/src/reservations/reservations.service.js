@@ -16,9 +16,14 @@ function read(reservation_id) {
     return knex("reservations").select("*").where({ reservation_id: reservation_id}).first();
 }
 
+async function update(updatedReservation) {
+    return await knex("reservations").select("*").where({ reservation_id: updatedReservation.reservation_id }).update(updatedReservation, "*").then((updatedRecords) => updatedRecords[0]);
+}
+
 module.exports = {
     create,
     list,
     listByDate,
     read,
+    update,
 }

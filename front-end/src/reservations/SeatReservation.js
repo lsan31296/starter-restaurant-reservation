@@ -1,6 +1,6 @@
 //Form responsible for seating the reservation
 import React, {useEffect, useState} from "react";
-import { listTables, seatTable } from "../utils/api";
+import { listTables, seatTable, updateReservationStatus } from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
 import { useHistory, useParams } from "react-router";
 
@@ -32,10 +32,13 @@ function SeatReservation() {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        seatTable(chosenTableId, params.reservation_id).then(() => {
+        seatTable(chosenTableId, params.reservation_id)
+            .catch(setError);
+        updateReservationStatus("seated", params.reservation_id)
+            .catch(setError)
+            .then(() => {
             history.push("/")
         })
-            .catch(setError);
     }
 
     console.log(chosenTableId);

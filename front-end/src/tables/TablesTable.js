@@ -1,19 +1,7 @@
 //Responsible for displaying the tables table on Dashboard
 import React from "react";
-import { finishTable } from "../utils/api";
 
-function TablesTable({ tables, loadDashboard, setError}) {
-    const handleFinishClick = async (table_id) => {
-        //const abortController = new AbortController();
-        //"Is the table ready to seat new guests? This cannot be undone."
-        if (window.confirm("Is this table ready to seat new guests? This cannot be undone.")) {
-        //if user selects "Ok" then:
-        //Send a 'DELETE' request to '/tables/:table_id/seat' to remove table assignment.
-            finishTable(table_id)
-                .catch(setError);
-            window.location.reload();
-        }
-    }
+function TablesTable({ tables, loadDashboard, setError, handleFinishClick}) {
 
     const rows = tables.map((table) => (
         <tr key={table.table_id}>
@@ -25,7 +13,7 @@ function TablesTable({ tables, loadDashboard, setError}) {
             </td>
             {
                 table.reservation_id &&
-                <td><button data-table-id-finish={table.table_id} type="button" className="btn btn-primary" onClick={() => handleFinishClick(table.table_id)}>Finish</button></td>
+                <td><button data-table-id-finish={table.table_id} type="button" className="btn btn-primary" onClick={() => handleFinishClick(table)}>Finish</button></td>
             }
         </tr>
     ));
