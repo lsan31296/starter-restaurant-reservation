@@ -116,12 +116,15 @@ export async function seatTable(table_id, reservation_id, signal) {
 
 //sends delete request to 'tables/:table_id/seat', pass in parameter table
 export async function finishTable(table, signal) {
+  //console.log("FINISH TABLE HIT!!!", table);
   const url = `${API_BASE_URL}/tables/${table.table_id}/seat`;
   const options = {
     method: "DELETE",
     headers,
+    //body: JSON.stringify({ data: table}),
     signal,
   };
+  //console.log("OPTION BODY~~~~~", options.body)
   return await fetchJson(url, options);
 }
 

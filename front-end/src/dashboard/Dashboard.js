@@ -22,6 +22,7 @@ function Dashboard({ date }) {
   useEffect(loadDashboard, [dates]);
 
   function loadDashboard() {
+    //console.log("LOAD DASHBOARD HITTTTT!!!!!!!!")
     const abortController = new AbortController();
     setReservationsError(null);
     listReservations({ reservation_date: dates }, abortController.signal)
@@ -52,12 +53,11 @@ function Dashboard({ date }) {
     if (window.confirm("Is this table ready to seat new guests? This cannot be undone.")) {
     //if user selects "Ok" then:
     //Send a 'DELETE' request to '/tables/:table_id/seat' to remove table assignment.
-        //updateReservationStatus("finished", table.reservation_id).catch(setTablesError);
-        finishTable(table).then(() => {
-            loadDashboard()
-        })
+        updateReservationStatus("finished", table.reservation_id).catch(setTablesError);
+        finishTable(table)
         .catch(setTablesError);
-        //window.location.reload();
+        //loadDashboard();
+        window.location.reload();
     }
 }
   

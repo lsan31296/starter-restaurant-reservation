@@ -101,7 +101,10 @@ const hasRequiredProperties = hasProperties(...requiredProperties);
 
 
 async function create(req, res) {
-  const newReservation = await reservationsService.create(req.body.data);
+  const newReservation = await reservationsService.create({
+    ...req.body.data,
+    status: "booked",
+  });
 
   res.status(201).json({ data: newReservation });
 }
@@ -109,8 +112,8 @@ async function create(req, res) {
 function validateStatusIsBooked(req, res, next) {
   //returns 201 is status is booked. 400 for 'seated' or 'finished'
   const { status } = req.body.data;
-  if (status === "booked") return next();
-  next({ status: 400, message: `The reservation status must be 'booked' when creating, currently status is '${status}'.` });
+  if (status && status !== "booked") return next({ status: 400, message: `The reservation status must be 'booked' when creating, currently status is '${status}'.` });
+  next();
 }
 
 const VALIDSTATUS = [ "booked", "seated", "finished" ];

@@ -19,9 +19,9 @@ async function destroy(req, res) {
         ...res.locals.table,
         reservation_id: null,
     }
-    await service.destroy(updatedTable);
+    await service.destroy(updatedTable);    
     const updatedReservation = {
-        ...res.locals.reservation,
+        ...res.locals.tableReservation,
         status: "finished"
     };
     await reservationsService.update(updatedReservation);
@@ -58,6 +58,17 @@ async function reservationExists(req, res, next) {
         return next();
     }
     next({ status: 404, message: `The reservation_id: ${req.body.data.reservation_id} associated with this table does not exist.` });
+}
+
+//used for 'PUT' method at '/:table_id/seat', must work diff than reservationExists() above as it uses 'POST'
+//Main difference here is the shape of the req.body.data. 
+async function tablesReservationExists(req, res, next) {
+    const tableReservation = await reservationsService.read(res.locals.table.reservation_id);
+    if (tableReservation) {
+        res.locals.tableReservation = tableReservation;
+        return next();
+    }
+    next({ status: 404, message: `The reservation_id: ${res.locals.table.reservation_id} associated with this table does not exist.` });
 }
 
 function hasData(req, res, next) {
@@ -121,5 +132,5 @@ module.exports = {
     create: [ hasData, hasRequiredPostProperties, validateTableName, validateCapacity, asyncErrorBoundary(create) ],
     list,
     update: [ hasData, asyncErrorBoundary(tableExists), hasReservationId, asyncErrorBoundary(reservationExists), resAlreadySeated, resExceedsCapacity, tableIsOccupied, asyncErrorBoundary(seatReservation)],
-    destroy: [ asyncErrorBoundary(tableExists), tableIsNotOccupied, asyncErrorBoundary(reservationExists), asyncErrorBoundary(destroy) ],
+    destroy: [ asyncErrorBoundary(tableExists), tableIsNotOccupied, asyncErrorBoundary(tablesReservationExists), asyncErrorBoundary(destroy) ],
 }
