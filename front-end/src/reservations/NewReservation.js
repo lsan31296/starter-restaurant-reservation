@@ -20,7 +20,7 @@ function NewReservation() {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        //console.log("Reservation:", reservation);
+        console.log("Reservation:", reservation);
         createReservation(reservation)
         .then(() => {
             history.push(`/dashboard?date=${reservation.reservation_date}`);

@@ -8,9 +8,9 @@ const reservationsService = require("./reservations.service");
  */
 async function list(req, res) {
   const date = req.query.date;
-  const data = date ? await reservationsService.listByDate(date) : await reservationsService.list();
-  const dataFiltered = data.filter((reservation) => reservation.status !== "finished");
-  res.json({ data: dataFiltered });
+  const mobile_number = req.query.mobile_number;
+  const data = mobile_number ? await reservationsService.search(mobile_number) : await reservationsService.listByDate(date);
+  res.json({ data: data });
 }
 
 async function reservationExists(req, res, next) {
@@ -128,7 +128,7 @@ function validateStatusIsKnownAndUnfinished(req, res, next) {
 }
 
 module.exports = {
-  list,
+  list: [asyncErrorBoundary(list)],
   create: [
     hasData,
     hasRequiredProperties,

@@ -109,4 +109,4 @@ function isReservationTimePast(reservation_date, reservation_time) {
 
 
 
-module.exports = {dayOfWeek, isReservationDatePast, isReservationTimePast};
+module.exports = {dayOfWeek, isReservationDatePast, isReservationTimePast, asDateString};

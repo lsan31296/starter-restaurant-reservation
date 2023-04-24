@@ -1,7 +1,7 @@
 //Responsible for displaying the tables table on Dashboard
 import React from "react";
 
-function TablesTable({ tables, loadDashboard, setError, handleFinishClick}) {
+function TablesTable({ tables, handleFinishClick}) {
 
     const rows = tables.map((table) => (
         <tr key={table.table_id}>

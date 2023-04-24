@@ -3,6 +3,8 @@ import { listReservations, listTables, finishTable, updateReservationStatus } fr
 import ErrorAlert from "../layout/ErrorAlert";
 import { next, previous, today } from "../utils/date-time";
 import TablesTable from "../tables/TablesTable";
+import ReservationsTable from "../reservations/ReservationsTable";
+import { useHistory } from "react-router";
 //import { useSearchParams } from "react-router-dom";
 
 
@@ -13,19 +15,22 @@ import TablesTable from "../tables/TablesTable";
  * @returns {JSX.Element}
  */
 function Dashboard({ date }) {
+
   const [reservations, setReservations] = useState([]);
   const [reservationsError, setReservationsError] = useState(null);
-  const [dates, setDates] = useState(date);
+  //const [dates, setDates] = useState(date);
   const [tables, setTables] = useState([]);
   const [tablesError, setTablesError] = useState(null);
+  const history = useHistory();
 
-  useEffect(loadDashboard, [dates]);
+
+  useEffect(loadDashboard, [date]);
 
   function loadDashboard() {
-    //console.log("LOAD DASHBOARD HITTTTT!!!!!!!!")
+    //console.log("LOAD DASHBOARD, Date", dates)
     const abortController = new AbortController();
     setReservationsError(null);
-    listReservations({ reservation_date: dates }, abortController.signal)
+    listReservations({ date: date }, abortController.signal)
       .then(setReservations)
       .catch(setReservationsError);
     //load up tables section
@@ -36,15 +41,18 @@ function Dashboard({ date }) {
   }
 
   const handleClickPrevious = () => {
-    setDates(previous(dates));
+    date = previous(date)
+    history.push(`/dashboard?date=${date}`);
   };
 
   const handleClickNext = () => {
-    setDates(next(dates));
+    date = next(date)
+    history.push(`/dashboard?date=${date}`);
   };
 
   const handleClickToday = () => {
-    setDates(today());
+    date = today()
+    history.push(`/dashboard?date=${date}`);
   };
 
   const handleFinishClick = async (table) => {
@@ -60,59 +68,30 @@ function Dashboard({ date }) {
         window.location.reload();
     }
 }
-  
-  const reservationsFiltered = reservations.filter((reservation)=> reservation.reservation_date === dates && reservation.reservation_status !== "finished");
 
-  const tableRows = reservationsFiltered.map((reservation) => (
-    <tr key={reservation.reservation_id}>
-      <th scope="row">{reservation.reservation_id}</th>
-      <td>{reservation.first_name}</td>
-      <td>{reservation.last_name}</td>
-      <td>{reservation.people}</td>
-      <td>{reservation.reservation_date}</td>
-      <td>{reservation.reservation_time}</td>
-      <td data-reservation-id-status={reservation.reservation_id}>{reservation.status}</td>
-      {reservation.status === "booked" && (
-        <td><a href={`/reservations/${reservation.reservation_id}/seat`} role="button" className="btn btn-primary">Seat</a></td>
-      )}
-    </tr>
-  ));
+const reservationsFiltered = reservations.filter((reservation) => reservation.status !== "finished" );
 
   return (
     <main>
       <h1>Dashboard</h1>
       <div className="d-md-flex mb-3">
-        <h4 className="mb-0">Reservations: {dates}</h4>
+        <h4 className="mb-0">Reservation Date: {date}</h4>
       </div>
+
       <div className="d-md-flex mb-3">
         <button type="button" className="btn btn-dark btn-small" onClick={handleClickPrevious}>Previous</button>
         <button type="button" className="btn btn-light btn-small" onClick={handleClickToday}>Today</button>
         <button type="button" className="btn btn-dark btn-small" onClick={handleClickNext}>Next</button>
       </div>
+
       <ErrorAlert error={reservationsError} />
-      <table className="table">
-        <thead className="thead-dark">
-          <tr>
-            <th scope="col">Reservation ID</th>
-            <th scope="col">First Name</th>
-            <th scope="col">Last Name</th>
-            <th scope="col">Party Size</th>
-            <th scope="col">Date</th>
-            <th scope="col">Time</th>
-            <th scope="col">Status</th>
-            <th scope="col"></th>
-          </tr>
-        </thead>
-        <tbody>
-          {tableRows}
-        </tbody>
-      </table>
+      <ReservationsTable reservations={reservationsFiltered} />
 
       <div className="d-md-flex mb-3">
         <h4 className="mb-0">Tables</h4>
       </div>
       <ErrorAlert error={tablesError} />
-      <TablesTable tables={tables} loadDashboard={loadDashboard} setError={setTablesError} handleFinishClick={handleFinishClick}/>
+      <TablesTable tables={tables} handleFinishClick={handleFinishClick}/>
     </main>
   );
 }

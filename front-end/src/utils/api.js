@@ -60,9 +60,11 @@ async function fetchJson(url, options, onCancel) {
 
 export async function listReservations(params, signal) {
   const url = new URL(`${API_BASE_URL}/reservations`);
+  console.log(params);
   Object.entries(params).forEach(([key, value]) =>
     url.searchParams.append(key, value.toString())
   );
+  console.log("URL Searcm Params", url.toString());
   return await fetchJson(url, { headers, signal }, [])
     .then(formatReservationDate)
     .then(formatReservationTime);
@@ -83,10 +85,12 @@ export async function createReservation(reservation, signal) {
 //used for now to ensure front end works properly
 export async function listTables(params, signal) {
   const url = new URL(`${API_BASE_URL}/tables`);
-  Object.entries(params).forEach(([key, value]) =>
-    url.searchParams.append(key, value.toString())
-  );
-  return await fetchJson(url, { headers, signal }, []);
+  const options = {
+    method: "GET",
+    headers,
+    signal
+  }
+  return await fetchJson(url, options, []);
 }
 
 export async function createTable(table, signal) {
@@ -143,3 +147,15 @@ export async function updateReservationStatus(status, reservation_id, signal) {
   };
   return await fetchJson(url, options);
 }
+
+/*
+export async function search(mobile_number, signal) {
+const url = `${API_BASE_URL}/reservations?mobile_number=${mobile_number}`;
+const options = {
+  method: "GET",
+  headers,
+  body: 
+}
+
+}
+*/
