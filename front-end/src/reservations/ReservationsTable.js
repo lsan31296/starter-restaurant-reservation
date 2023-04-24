@@ -1,6 +1,6 @@
 //Displays the reservations table as seen in Dashboard.js
 
-function ReservationsTable({ reservations }) {
+function ReservationsTable({ reservations, handleReservationCancel }) {
     //will be adding 'Edit' button for US-08
     const tableRows = reservations.map((reservation) => (
       <tr key={reservation.reservation_id}>
@@ -11,10 +11,13 @@ function ReservationsTable({ reservations }) {
         <td>{reservation.reservation_date}</td>
         <td>{reservation.reservation_time}</td>
         <td data-reservation-id-status={reservation.reservation_id}>{reservation.status}</td>
-        {reservation.status === "booked" && (
-          <td><a href={`/reservations/${reservation.reservation_id}/seat`} role="button" className="btn btn-primary">Seat</a></td>
-        )}
-        <td><a href={`/reservations/${reservation.reservation_id}/edit`} role="button" className="btn btn-secondary">Edit</a></td>
+        <td className="btn-group" role="group" >
+            {reservation.status === "booked" && (
+                <a href={`/reservations/${reservation.reservation_id}/seat`} type="button" className="btn btn-primary">Seat</a>
+            )}
+            <a href={`/reservations/${reservation.reservation_id}/edit`} type="button" className="btn btn-secondary">Edit</a>
+            <button type="button" onClick={() => (handleReservationCancel(reservation))} className="btn btn-danger">Cancel</button>
+        </td>
       </tr>
     ));
 
@@ -29,7 +32,6 @@ function ReservationsTable({ reservations }) {
                     <th scope="col">Date</th>
                     <th scope="col">Time</th>
                     <th scope="col">Status</th>
-                    <th scope="col"></th>
                     <th scope="col"></th>
                 </tr>
             </thead>

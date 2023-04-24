@@ -69,6 +69,10 @@ function Dashboard({ date }) {
     }
 }
 
+const handleReservationCancel = async (reservation) => {
+  console.log("Hit Reservation Cancel!");
+}
+
 const reservationsFiltered = reservations.filter((reservation) => reservation.status !== "finished" );
 
   return (
@@ -85,7 +89,7 @@ const reservationsFiltered = reservations.filter((reservation) => reservation.st
       </div>
 
       <ErrorAlert error={reservationsError} />
-      <ReservationsTable reservations={reservationsFiltered} />
+      <ReservationsTable reservations={reservationsFiltered} handleReservationCancel={handleReservationCancel}/>
 
       <div className="d-md-flex mb-3">
         <h4 className="mb-0">Tables</h4>
