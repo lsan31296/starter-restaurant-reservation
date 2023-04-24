@@ -1,7 +1,7 @@
 //Displays the reservations table as seen in Dashboard.js
 
 function ReservationsTable({ reservations }) {
-
+    //will be adding 'Edit' button for US-08
     const tableRows = reservations.map((reservation) => (
       <tr key={reservation.reservation_id}>
         <th scope="row">{reservation.reservation_id}</th>
@@ -14,6 +14,7 @@ function ReservationsTable({ reservations }) {
         {reservation.status === "booked" && (
           <td><a href={`/reservations/${reservation.reservation_id}/seat`} role="button" className="btn btn-primary">Seat</a></td>
         )}
+        <td><a href={`/reservations/${reservation.reservation_id}/edit`} role="button" className="btn btn-secondary">Edit</a></td>
       </tr>
     ));
 
@@ -28,6 +29,7 @@ function ReservationsTable({ reservations }) {
                     <th scope="col">Date</th>
                     <th scope="col">Time</th>
                     <th scope="col">Status</th>
+                    <th scope="col"></th>
                     <th scope="col"></th>
                 </tr>
             </thead>
