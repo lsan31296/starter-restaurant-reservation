@@ -71,6 +71,10 @@ function Dashboard({ date }) {
 
 const handleReservationCancel = async (reservation) => {
   console.log("Hit Reservation Cancel!");
+  if (window.confirm("Do you want to cancel this reservation? This cannot be undone.")) {
+    console.log("Ok! Implement setting of reservation status to 'cancelled', then refresh results on the page")
+  }
+  console.log("If you clicked Cancel, no changes will be made.")
 }
 
 const reservationsFiltered = reservations.filter((reservation) => reservation.status !== "finished" );
