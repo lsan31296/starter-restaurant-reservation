@@ -26,10 +26,19 @@ async function read(req, res) {
   res.json({ data: res.locals.reservation });
 }
 
-async function update(req, res) {
+async function updateStatus(req, res) {
   const updatedReservation = {
     ...res.locals.reservation,
     status: req.body.data.status,
+  };
+  const data = await reservationsService.update(updatedReservation);
+  res.status(200).json({ data: data });
+}
+
+async function update(req, res) {
+  const updatedReservation = {
+    ...res.locals.reseervation,
+    ...req.body.data,
   };
   const data = await reservationsService.update(updatedReservation);
   res.status(200).json({ data: data });
@@ -112,7 +121,7 @@ async function create(req, res) {
 function validateStatusIsBooked(req, res, next) {
   //returns 201 is status is booked. 400 for 'seated' or 'finished'
   const { status } = req.body.data;
-  if (status && status !== "booked") return next({ status: 400, message: `The reservation status must be 'booked' when creating, currently status is '${status}'.` });
+  if (status && status !== "booked") return next({ status: 400, message: `The reservation status must be 'booked' when creating/updating, currently status is '${status}'.` });
   next();
 }
 
@@ -145,9 +154,21 @@ module.exports = {
     asyncErrorBoundary(reservationExists),
     read,
   ],
-  update: [
+  updateStatus: [
     asyncErrorBoundary(reservationExists),
     validateStatusIsKnownAndUnfinished,
+    asyncErrorBoundary(updateStatus),
+  ],
+  update: [
+    asyncErrorBoundary(reservationExists),
+    hasRequiredProperties,
+    validateReservationDate,
+    validateFutureReservationDate,
+    validateReservationDayOfWeek,
+    validateReservationTime,
+    validateFutureReservationTime,
+    validatePeople,
+    validateStatusIsBooked,
     asyncErrorBoundary(update),
   ],
 };

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import ReservationForm from "./ReservationForm";
 import { useHistory, useParams } from "react-router";
-import { getReservation } from "../utils/api";
+import { getReservation, updateReservation } from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
 
 
@@ -27,13 +27,11 @@ function EditReservation() {
     const handleSubmit = (event) => {
         event.preventDefault();
         console.log("Handle Submit Hit! Reservation:", reservation);
-        /*
-        createReservation(reservation)
+        updateReservation(reservation)
         .then(() => {
-            history.push(`/dashboard?date=${reservation.reservation_date}`);
+            history.goBack();
         })
         .catch(setError);
-        */
     };
 
     const handleChange = ({ target }) => {

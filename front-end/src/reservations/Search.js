@@ -10,22 +10,30 @@ function Search() {
     const [error, setError] = useState(null);
     const [reservationsMobile, setReservationsMobile] = useState([]);
 
-    const handleSubmit = (event) => {
+    const handleSearchSubmit = (event) => {
         event.preventDefault();
         listReservations({ mobile_number: mobile_number }).then((reservations) => setReservationsMobile(reservations)).catch(setError);
     };
 
-    const handleChange = ({ target }) => {
+    const handleSearchChange = ({ target }) => {
         console.log("Target.value: ", target.value);
         setMobile_number(target.value);
     };
 
+    const handleReservationCancel = async (reservation) => {
+        console.log("Hit Reservation Cancel!");
+        if (window.confirm("Do you want to cancel this reservation? This cannot be undone.")) {
+            console.log("Ok! Implement setting of reservation status to 'cancelled', then refresh results on the page")
+        }
+        console.log("If you clicked Cancel the Reservation Cancel, no changes will be made.")
+    }
+
     return (
         <main>
             <h1>Search</h1>
-            <form htmlFor="mobile_number" onSubmit={handleSubmit}>
+            <form htmlFor="mobile_number" onSubmit={handleSearchSubmit}>
                 <div className="input-group mb-3" >
-                    <input name="mobile_number" id="mobile_number" className="form-control" placeholder="Reservation Phone Number" type="text" required={true} onChange={handleChange} value={mobile_number} />
+                    <input name="mobile_number" id="mobile_number" className="form-control" placeholder="Reservation Phone Number" type="text" required={true} onChange={handleSearchChange} value={mobile_number} />
                     <div className="input-group-append">
                         <button className="btn btn-primary" type="submit">Find</button>
                     </div>
@@ -34,7 +42,7 @@ function Search() {
 
             <ErrorAlert error={error} />
             {reservationsMobile.length ? (
-                <ReservationsTable reservations={reservationsMobile} />
+                <ReservationsTable reservations={reservationsMobile} handleReservationCancel={handleReservationCancel}/>
             )
             :
             (
