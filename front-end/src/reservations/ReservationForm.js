@@ -1,4 +1,5 @@
 //Responsible for displaying form for creating/updating reservation
+import React from "react";
 
 function ReservationForm({ reservation, handleCancel, handleChange, handleSubmit }) {
 

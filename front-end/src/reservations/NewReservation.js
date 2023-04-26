@@ -21,7 +21,6 @@ function NewReservation() {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        console.log("Reservation:", reservation);
         createReservation(reservation)
         .then(() => {
             history.push(`/dashboard?date=${reservation.reservation_date}`);
@@ -34,7 +33,6 @@ function NewReservation() {
             ...reservation,
             [target.name]: target.name === "people" ? parseInt(target.value) : target.value,
         });
-        //console.log('Reservation:', reservation);
     };
 
     const handleCancel = () => {

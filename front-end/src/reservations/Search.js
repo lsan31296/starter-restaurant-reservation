@@ -1,7 +1,7 @@
 //Responsible for displaying a search box used to search for reservations with partial/complete phone number
 
-import { useState } from "react";
-import { listReservations } from "../utils/api";
+import React, { useState } from "react";
+import { listReservations, updateReservationStatus } from "../utils/api";
 import ReservationsTable from "../reservations/ReservationsTable";
 import ErrorAlert from "../layout/ErrorAlert";
 
@@ -16,16 +16,14 @@ function Search() {
     };
 
     const handleSearchChange = ({ target }) => {
-        console.log("Target.value: ", target.value);
         setMobile_number(target.value);
     };
 
     const handleReservationCancel = async (reservation) => {
-        console.log("Hit Reservation Cancel!");
         if (window.confirm("Do you want to cancel this reservation? This cannot be undone.")) {
-            console.log("Ok! Implement setting of reservation status to 'cancelled', then refresh results on the page")
+            await updateReservationStatus("cancelled", reservation.reservation_id);
+            window.location.reload();
         }
-        console.log("If you clicked Cancel the Reservation Cancel, no changes will be made.")
     }
 
     return (

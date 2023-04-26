@@ -125,7 +125,7 @@ function validateStatusIsBooked(req, res, next) {
   next();
 }
 
-const VALIDSTATUS = [ "booked", "seated", "finished" ];
+const VALIDSTATUS = [ "booked", "seated", "finished", "cancelled" ];
 
 function validateStatusIsKnownAndUnfinished(req, res, next) {
   const { status } = req.body.data;

@@ -27,7 +27,7 @@ function Dashboard({ date }) {
   useEffect(loadDashboard, [date]);
 
   function loadDashboard() {
-    //console.log("LOAD DASHBOARD, Date", dates)
+    console.log("LOAD DASHBOARD");
     const abortController = new AbortController();
     setReservationsError(null);
     listReservations({ date: date }, abortController.signal)
@@ -56,28 +56,20 @@ function Dashboard({ date }) {
   };
 
   const handleFinishClick = async (table) => {
-    //const abortController = new AbortController();
-    //"Is the table ready to seat new guests? This cannot be undone."
     if (window.confirm("Is this table ready to seat new guests? This cannot be undone.")) {
-    //if user selects "Ok" then:
-    //Send a 'DELETE' request to '/tables/:table_id/seat' to remove table assignment.
         updateReservationStatus("finished", table.reservation_id).catch(setTablesError);
-        finishTable(table)
-        .catch(setTablesError);
-        //loadDashboard();
+        finishTable(table).catch(setTablesError);
         window.location.reload();
     }
 }
 
 const handleReservationCancel = async (reservation) => {
-  console.log("Hit Reservation Cancel!");
+  console.log("Hit Reservation Cancel! Status", reservation.status);
   if (window.confirm("Do you want to cancel this reservation? This cannot be undone.")) {
-    console.log("Ok! Implement setting of reservation status to 'cancelled', then refresh results on the page")
+    await updateReservationStatus("cancelled", reservation.reservation_id);
+    loadDashboard();
   }
-  console.log("If you clicked Cancel, no changes will be made.")
 }
-
-const reservationsFiltered = reservations.filter((reservation) => reservation.status !== "finished" );
 
   return (
     <main>
@@ -93,7 +85,7 @@ const reservationsFiltered = reservations.filter((reservation) => reservation.st
       </div>
 
       <ErrorAlert error={reservationsError} />
-      <ReservationsTable reservations={reservationsFiltered} handleReservationCancel={handleReservationCancel}/>
+      <ReservationsTable reservations={reservations} handleReservationCancel={handleReservationCancel}/>
 
       <div className="d-md-flex mb-3">
         <h4 className="mb-0">Tables</h4>

@@ -60,11 +60,9 @@ async function fetchJson(url, options, onCancel) {
 
 export async function listReservations(params, signal) {
   const url = new URL(`${API_BASE_URL}/reservations`);
-  console.log(params);
   Object.entries(params).forEach(([key, value]) =>
     url.searchParams.append(key, value.toString())
   );
-  console.log("URL Searcm Params", url.toString());
   return await fetchJson(url, { headers, signal }, [])
     .then(formatReservationDate)
     .then(formatReservationTime);
@@ -104,7 +102,6 @@ export async function updateReservation(reservation, signal) {
   return await fetchJson(url, options);
 }
 
-//used for now to ensure front end works properly
 export async function listTables(params, signal) {
   const url = new URL(`${API_BASE_URL}/tables`);
   const options = {
@@ -142,15 +139,12 @@ export async function seatTable(table_id, reservation_id, signal) {
 
 //sends delete request to 'tables/:table_id/seat', pass in parameter table
 export async function finishTable(table, signal) {
-  //console.log("FINISH TABLE HIT!!!", table);
   const url = `${API_BASE_URL}/tables/${table.table_id}/seat`;
   const options = {
     method: "DELETE",
     headers,
-    //body: JSON.stringify({ data: table}),
     signal,
   };
-  //console.log("OPTION BODY~~~~~", options.body)
   return await fetchJson(url, options);
 }
 
@@ -169,15 +163,3 @@ export async function updateReservationStatus(status, reservation_id, signal) {
   };
   return await fetchJson(url, options);
 }
-
-/*
-export async function search(mobile_number, signal) {
-const url = `${API_BASE_URL}/reservations?mobile_number=${mobile_number}`;
-const options = {
-  method: "GET",
-  headers,
-  body: 
-}
-
-}
-*/
