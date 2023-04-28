@@ -103,6 +103,15 @@ function validatePeople(req, res, next) {
   next({ status: 400, message: `people property must be a number greater than zero.` });
 }
 
+function validateMobileNumber(req, res, next) {
+  const { mobile_number } = req.body.data;
+
+  if (mobile_number.match(/^\(?(\d{3})\)?[- ]?(\d{3})[- ]?(\d{4})$/)) {
+    return next();
+  }
+  next({ status: 400, message: `Mobile Number must be ten digits and in the form of a phone number. You entered: '${mobile_number}'.` });
+}
+
 const requiredProperties = ["first_name", "last_name", "mobile_number", "reservation_date", "reservation_time", "people"];
 
 //Will check if any property is either missing or empty
@@ -147,6 +156,7 @@ module.exports = {
     validateReservationTime,
     validateFutureReservationTime,
     validatePeople,
+    validateMobileNumber,
     validateStatusIsBooked,
     asyncErrorBoundary(create)
   ],
@@ -168,6 +178,7 @@ module.exports = {
     validateReservationTime,
     validateFutureReservationTime,
     validatePeople,
+    validateMobileNumber,
     validateStatusIsBooked,
     asyncErrorBoundary(update),
   ],

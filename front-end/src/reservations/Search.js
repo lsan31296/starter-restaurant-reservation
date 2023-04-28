@@ -12,7 +12,9 @@ function Search() {
 
     const handleSearchSubmit = (event) => {
         event.preventDefault();
-        listReservations({ mobile_number: mobile_number }).then((reservations) => setReservationsMobile(reservations)).catch(setError);
+        const abortController = new AbortController();
+        listReservations({ mobile_number: mobile_number }, abortController.signal).then((reservations) => setReservationsMobile(reservations)).catch(setError);
+        return () => abortController.abort();
     };
 
     const handleSearchChange = ({ target }) => {

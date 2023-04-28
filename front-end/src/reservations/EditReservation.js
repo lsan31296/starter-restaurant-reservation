@@ -25,12 +25,14 @@ function EditReservation() {
     
     const handleSubmit = (event) => {
         event.preventDefault();
-        console.log("Handle Submit Hit! Reservation:", reservation);
-        updateReservation(reservation)
+        const abortController = new AbortController();
+
+        updateReservation(reservation, abortController.signal)
         .then(() => {
             history.push(`/dashboard?date=${reservation.reservation_date}`);
         })
         .catch(setError);
+        return () => abortController.abort();
     };
 
     const handleChange = ({ target }) => {

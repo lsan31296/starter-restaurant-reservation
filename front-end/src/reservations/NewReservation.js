@@ -21,11 +21,14 @@ function NewReservation() {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        createReservation(reservation)
+        const abortController = new AbortController();
+        
+        createReservation(reservation, abortController.signal)
         .then(() => {
             history.push(`/dashboard?date=${reservation.reservation_date}`);
         })
         .catch(setError);
+        return () => abortController.abort();
     };
 
     const handleChange = ({ target }) => {
